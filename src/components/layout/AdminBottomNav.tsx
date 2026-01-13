@@ -15,7 +15,7 @@ export const AdminBottomNav = () => {
   ];
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-background-dark border-t border-gray-100 dark:border-white/10 p-3 flex justify-around text-gray-400 z-50 w-full max-w-[480px] mx-auto">
+    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-background-dark border-t border-gray-100 dark:border-white/10 p-3 flex justify-around text-gray-400 z-50 w-full md:max-w-xl lg:max-w-2xl mx-auto">
       {navItems.map((item) => {
         const isActive = pathname === item.href;
         return (
