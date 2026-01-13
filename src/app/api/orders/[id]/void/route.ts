@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { notifyOrderUpdate } from '../../stream/route';
+import { notifyOrderUpdate } from '@/lib/sse';
 
 // PATCH /api/orders/[id]/void - Void an order
 export async function PATCH(

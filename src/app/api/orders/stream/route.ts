@@ -1,32 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { OrderStatus } from '@prisma/client';
-
-// Store for SSE connections
-const clients = new Set<ReadableStreamDefaultController>();
-
-// Export for use in other routes when new orders are created
-export function notifyNewOrder(order: { id: string; queueNumber: string; customerName: string }) {
-  const message = `data: ${JSON.stringify({ type: 'new_order', order })}\n\n`;
-  clients.forEach((controller) => {
-    try {
-      controller.enqueue(new TextEncoder().encode(message));
-    } catch {
-      clients.delete(controller);
-    }
-  });
-}
-
-export function notifyOrderUpdate(order: { id: string; queueNumber: string; status: OrderStatus }) {
-  const message = `data: ${JSON.stringify({ type: 'order_update', order })}\n\n`;
-  clients.forEach((controller) => {
-    try {
-      controller.enqueue(new TextEncoder().encode(message));
-    } catch {
-      clients.delete(controller);
-    }
-  });
-}
+import { clients } from '@/lib/sse';
 
 // ==================== GET - SSE Stream ====================
 export async function GET(request: NextRequest) {

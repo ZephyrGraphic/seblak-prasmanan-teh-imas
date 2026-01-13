@@ -2,14 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import * as bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
-
-// Simple session token (in production, use proper JWT/session library)
-function generateSessionToken(): string {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
-}
-
-// In-memory session store (in production, use Redis or database)
-const sessions = new Map<string, { adminId: string; username: string; expiresAt: Date }>();
+import { sessions, generateSessionToken } from '@/lib/session';
 
 // ==================== POST - Login ====================
 export async function POST(request: NextRequest) {
@@ -90,4 +83,4 @@ export async function POST(request: NextRequest) {
 }
 
 // Export for middleware use
-export { sessions };
+

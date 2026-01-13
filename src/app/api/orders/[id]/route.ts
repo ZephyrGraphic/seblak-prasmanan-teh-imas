@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
-import { notifyOrderUpdate } from '../stream/route';
+import { notifyOrderUpdate } from '@/lib/sse';
 
 // ==================== GET - Single Order ====================
 export async function GET(
