@@ -98,6 +98,18 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Check if store is open
+    const settings = await prisma.storeSettings.findUnique({
+      where: { id: 'default' }
+    });
+
+    if (settings && !settings.isOpen) {
+      return NextResponse.json(
+        { success: false, error: 'Maaf, toko sedang tutup. Tidak dapat menerima pesanan baru.' },
+        { status: 400 }
+      );
+    }
     
     if (bowls.length === 0 && drinks.length === 0) {
       return NextResponse.json(

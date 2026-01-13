@@ -112,8 +112,11 @@ export default function AdminDashboard() {
     }, []);
 
     // Setup SSE connection
+    // Use a short reliable beep sound (Data URI to avoid network issues)
+    const NOTIFICATION_SOUND = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTSVMAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//OEIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//OEJAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//OEJAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//OEJAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//OEJAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//OEJAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//OEJAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//OEJAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq';
+
     useEffect(() => {
-        audioRef.current = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        audioRef.current = new Audio(NOTIFICATION_SOUND);
         
         fetchOrders();
         
@@ -295,6 +298,16 @@ export default function AdminDashboard() {
                         className={clsx("p-2 rounded-full", soundEnabled ? "bg-primary/10 text-primary" : "bg-gray-100 text-gray-400")}
                     >
                         <span className="material-symbols-outlined">{soundEnabled ? 'volume_up' : 'volume_off'}</span>
+                    </button>
+                    <button 
+                        onClick={() => {
+                            if (!soundEnabled) setSoundEnabled(true);
+                            playNotification('Tes Suara');
+                        }}
+                        className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20"
+                        title="Tes Notifikasi"
+                    >
+                        <span className="material-symbols-outlined">play_circle</span>
                     </button>
                 </div>
             </header>

@@ -20,9 +20,48 @@ export default function OrderPage() {
     const [toppings, setToppings] = useState<string[]>([]);
     const [tempRequest, setTempRequest] = useState('');
 
+    const [isStoreOpen, setIsStoreOpen] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
         setIsMounted(true);
+        
+        // Fetch store settings
+        fetch('/api/settings')
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setIsStoreOpen(data.data.isOpen);
+                }
+            })
+            .catch(err => console.error('Failed to fetch settings:', err))
+            .finally(() => setIsLoading(false));
     }, []);
+
+    if (!isMounted || isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-background-dark">
+                <span className="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span>
+            </div>
+        );
+    }
+
+    if (!isStoreOpen) {
+        return (
+            <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col items-center justify-center p-6 text-center">
+                <div className="size-24 bg-gray-200 dark:bg-white/10 rounded-full flex items-center justify-center mb-6">
+                    <span className="material-symbols-outlined text-4xl text-gray-400">storefront</span>
+                </div>
+                <h1 className="text-2xl font-extrabold text-[#181411] dark:text-white mb-2">Toko Sedang Tutup</h1>
+                <p className="text-gray-500 max-w-xs mx-auto mb-8">
+                    Maaf, Seblak Teh Imas sedang tidak menerima pesanan saat ini. Silakan kembali lagi nanti.
+                </p>
+                <Button onClick={() => router.push('/')} variant="outline">
+                    Kembali ke Beranda
+                </Button>
+            </div>
+        );
+    }
 
     const calculatePrice = () => {
         let total = 0;
