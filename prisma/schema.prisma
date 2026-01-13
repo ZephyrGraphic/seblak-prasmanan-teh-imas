@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============ ENUMS ============
+
+enum OrderStatus {
+  PENDING
+  PREPARING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+enum DiningOption {
+  DINE_IN
+  TAKEAWAY
+}
+
+enum PaymentMethod {
+  CASH
+  TRANSFER
+}
+
+enum StockStatus {
+  OK
+  LOW
+  OUT
+}
+
+// ============ MODELS ============
+
+model Order {
+  id            String        @id @default(cuid())
+  queueNumber   String        // Format: DIA-001 or TAK-001
+  customerName  String
+  diningOption  DiningOption
+  paymentMethod PaymentMethod
+  status        OrderStatus   @default(PENDING)
+  specialRequest String?
+  totalPrice    Int
+  
+  // Void order fields
+  voidedAt      DateTime?
+  voidReason    String?
+  
+  items         OrderItem[]
+  drinks        OrderDrink[]
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  levelPedas  String   // "Tidak Pedas", "Sedang", "Pedas", "Extra Pedas"
+  kuah        String   // "Nyemek", "Sedang", "Banyak"
+  rasa        String   // "Asin", "Gurih", "Manis", etc.
+  telur       String   // "Telur Utuh", "Telur Orak Arik"
+  sayur       String   // "Sayur", "Tanpa Sayur"
+  toppings    String[] // Array of topping names
+  price       Int
+  
+  createdAt   DateTime @default(now())
+}
+
+model OrderDrink {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  name      String
+  quantity  Int
+  price     Int      // Price per unit
+  
+  createdAt DateTime @default(now())
+}
+
+model StockItem {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  unit        String      // "kg", "pcs", "pack"
+  stock       Int         @default(0)
+  status      StockStatus @default(OK)
+  isAvailable Boolean     @default(true)  // Toggle for availability
+  emoji       String?     // Item emoji for display
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  
+  lastLogin    DateTime?
+  createdAt    DateTime @default(now())
+}
+
+model StoreSettings {
+  id                String  @id @default("default")
+  isOpen            Boolean @default(true)
+  soundNotification Boolean @default(true)
+  ttsNotification   Boolean @default(false)
+  whatsappNumber    String  @default("6281234567890")
+  danaNumber        String  @default("081234567890")
+  danaAccountName   String  @default("TEH IMAS")
+  
+  updatedAt         DateTime @updatedAt
+}
+
+// Queue counter for daily reset
+model QueueCounter {
+  id        String   @id @default("default")
+  date      String   // Format: YYYY-MM-DD
+  dineIn    Int      @default(0)
+  takeaway  Int      @default(0)
+  
+  updatedAt DateTime @updatedAt
+}
