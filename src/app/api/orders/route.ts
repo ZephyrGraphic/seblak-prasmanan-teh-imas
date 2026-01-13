@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { DiningOption, PaymentMethod, OrderStatus } from '@prisma/client';
+import { notifyNewOrder } from '@/lib/sse';
 
 // Helper to get today's date string
 function getTodayDate(): string {
@@ -174,6 +175,9 @@ export async function POST(request: NextRequest) {
       }
     });
     
+    // Notify clients about new order
+    notifyNewOrder(order);
+
     return NextResponse.json({ 
       success: true, 
       data: order,
