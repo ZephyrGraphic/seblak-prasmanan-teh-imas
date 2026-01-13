@@ -16,7 +16,7 @@ export const BottomNav = () => {
   ];
   
   return (
-    <div className="border-t border-zinc-100 dark:border-zinc-800 flex justify-around items-center py-4 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md fixed bottom-0 left-0 right-0 z-40 w-full max-w-[480px] mx-auto">
+    <div className="border-t border-zinc-100 dark:border-zinc-800 flex justify-around items-center py-4 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md fixed bottom-0 left-0 right-0 z-40 w-full md:max-w-xl lg:max-w-2xl mx-auto">
       {navItems.map((item) => {
         const isActive = pathname === item.href;
         return (

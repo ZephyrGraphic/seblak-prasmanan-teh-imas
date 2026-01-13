@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import "material-symbols";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -34,14 +35,14 @@ export default function RootLayout({
   return (
     <html lang="id" className="light" suppressHydrationWarning>
       <head>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" />
+
       </head>
       <body
         className={`${plusJakartaSans.variable} font-sans antialiased bg-[#f2f2f2] dark:bg-[#1a1a1a] text-[#181411] dark:text-white min-h-screen flex justify-center`}
         suppressHydrationWarning
       >
         {/* Mobile Wrapper */}
-        <div className="relative flex h-full min-h-screen w-full max-w-[480px] flex-col overflow-x-hidden shadow-2xl bg-background-light dark:bg-background-dark">
+        <div className="relative flex h-full min-h-screen w-full md:max-w-xl lg:max-w-2xl mx-auto flex-col overflow-x-hidden shadow-2xl bg-background-light dark:bg-background-dark">
           {children}
         </div>
       </body>
