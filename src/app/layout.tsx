@@ -10,12 +10,35 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://seblak-prasmanan-teh-imas.vercel.app/"),
   title: "Seblak Teh Imas",
-  description: "Seblak Prasmanan Autentik Bandung",
+  description: "Seblak Prasmanan Autentik Bandung - Pesan Online Sekarang!",
   manifest: "/manifest.json",
   icons: {
     icon: "/icons/icon-192x192.png",
     apple: "/icons/icon-192x192.png",
+  },
+  openGraph: {
+    title: "Seblak Teh Imas",
+    description: "Nikmati Seblak Prasmanan Autentik dengan berbagai pilihan topping dan level pedas.",
+    url: "https://seblak-prasmanan-teh-imas.vercel.app/",
+    siteName: "Seblak Teh Imas",
+    images: [
+      {
+        url: "/icons/icon-512x512.png",
+        width: 512,
+        height: 512,
+        alt: "Logo Seblak Teh Imas",
+      },
+    ],
+    locale: "id_ID",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Seblak Teh Imas",
+    description: "Seblak Prasmanan Autentik Bandung - Pesan Online Sekarang!",
+    images: ["/icons/icon-512x512.png"],
   },
 };
 
