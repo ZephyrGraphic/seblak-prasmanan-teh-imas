@@ -4,9 +4,18 @@ import { useRouter } from "next/navigation";
 import { TopBar } from "@/components/layout/TopBar";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { useOrderStore, DRINKS_PRICE } from "@/store/orderStore";
+import { useOrderStore } from "@/store/orderStore";
 import clsx from "clsx";
 import Link from "next/link";
+
+interface MenuItem {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  emoji?: string;
+  isAvailable: boolean;
+}
 
 const membershipEmoji: Record<string, string> = {
   BRONZE: "🥉",
@@ -19,12 +28,47 @@ export default function CheckoutPage() {
   const store = useOrderStore();
   const [isMounted, setIsMounted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [lastQueueNumber, setLastQueueNumber] = useState<string | null>(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [lookupMessage, setLookupMessage] = useState<string | null>(null);
 
+  // Drinks from database
+  const [drinks, setDrinks] = useState<MenuItem[]>([]);
+  const [isLoadingDrinks, setIsLoadingDrinks] = useState(true);
+  const [isAgreed, setIsAgreed] = useState(false);
+
+  // Store settings
+  const [danaNumber, setDanaNumber] = useState("083813731449");
+  const [danaAccountName, setDanaAccountName] = useState("TEH IMAS");
+  const [whatsappNumber, setWhatsappNumber] = useState("6283813731449");
+
   useEffect(() => {
     setIsMounted(true);
+
+    // Fetch drinks from stock
+    fetch("/api/stock")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          const availableDrinks = data.data.filter(
+            (item: MenuItem) => item.isAvailable && item.category === "drink",
+          );
+          setDrinks(availableDrinks);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch drinks:", err))
+      .finally(() => setIsLoadingDrinks(false));
+
+    // Fetch store settings
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data) {
+          setDanaNumber(data.data.danaNumber || "083813731449");
+          setDanaAccountName(data.data.danaAccountName || "TEH IMAS");
+          setWhatsappNumber(data.data.whatsappNumber || "6283813731449");
+        }
+      })
+      .catch((err) => console.error("Failed to fetch settings:", err));
   }, []);
 
   // Lookup customer by phone
@@ -124,7 +168,6 @@ export default function CheckoutPage() {
 
       const order = result.data;
       const queueNumber = order.queueNumber;
-      setLastQueueNumber(queueNumber);
 
       // Create WhatsApp message
       const text = [
@@ -140,7 +183,7 @@ export default function CheckoutPage() {
             `\n   Level: ${b.levelPedas}` +
             `\n   Kuah: ${b.kuah}` +
             `\n   Rasa: ${b.rasa}` +
-            `\n   Opsi: ${b.telur}, ${b.sayur}` +
+            `\n   Sayur: ${b.sayur}` +
             b.toppings.map((t) => `\n   + ${t}`).join("") +
             `\n   Harga: Rp ${b.price.toLocaleString("id-ID")}`
           );
@@ -168,9 +211,9 @@ export default function CheckoutPage() {
         queueNumber: queueNumber,
       });
 
-      // Open WhatsApp
+      // Open WhatsApp with owner's number
       window.open(
-        `https://wa.me/6281574627052?text=${encodeURIComponent(text)}`,
+        `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`,
         "_blank",
       );
 
@@ -273,7 +316,9 @@ export default function CheckoutPage() {
             {["Dine-in", "Takeaway"].map((opt) => (
               <button
                 key={opt}
-                onClick={() => store.setDiningOption(opt as any)}
+                onClick={() =>
+                  store.setDiningOption(opt as "Dine-in" | "Takeaway")
+                }
                 className={clsx(
                   "flex-1 py-2 rounded-lg text-sm font-bold transition-all",
                   store.diningOption === opt
@@ -334,7 +379,7 @@ export default function CheckoutPage() {
                       {bowl.rasa}
                     </p>
                     <p>
-                      {bowl.telur} • {bowl.sayur}
+                      <span className="font-bold">Sayur:</span> {bowl.sayur}
                     </p>
                   </div>
                   <p className="text-xs text-gray-500 mt-1 line-clamp-2">
@@ -357,51 +402,69 @@ export default function CheckoutPage() {
           <h3 className="text-[#181411] dark:text-white font-bold text-lg mb-4">
             Minuman
           </h3>
-          <div className="space-y-4">
-            {Object.entries(DRINKS_PRICE).map(([name, price]) => {
-              const currentQty =
-                store.drinks.find((d) => d.name === name)?.quantity || 0;
-              return (
-                <div key={name} className="flex items-center justify-between">
-                  <div className="flex gap-3 items-center">
-                    <div className="size-10 bg-primary/5 rounded-lg flex items-center justify-center text-primary">
-                      <span className="material-symbols-outlined">
-                        local_drink
-                      </span>
+          {isLoadingDrinks ? (
+            <div className="flex items-center justify-center py-4">
+              <span className="material-symbols-outlined animate-spin text-gray-400">
+                progress_activity
+              </span>
+            </div>
+          ) : drinks.length === 0 ? (
+            <p className="text-center text-gray-400 py-4 text-sm">
+              Tidak ada minuman tersedia
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {drinks.map((drink) => {
+                const currentQty =
+                  store.drinks.find((d) => d.name === drink.name)?.quantity ||
+                  0;
+                return (
+                  <div
+                    key={drink.id}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex gap-3 items-center">
+                      <div className="size-10 bg-primary/5 rounded-lg flex items-center justify-center text-xl">
+                        {drink.emoji || "🥤"}
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm">{drink.name}</p>
+                        <p className="text-xs text-gray-500">
+                          Rp {drink.price.toLocaleString("id-ID")}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-sm">{name}</p>
-                      <p className="text-xs text-gray-500">
-                        Rp {price.toLocaleString("id-ID")}
-                      </p>
+                    <div className="flex items-center gap-3 bg-gray-50 dark:bg-white/5 rounded-full p-1">
+                      <button
+                        onClick={() =>
+                          store.updateDrink(drink.name, drink.price, -1)
+                        }
+                        className="size-7 bg-white dark:bg-white/10 rounded-full flex items-center justify-center text-primary shadow-sm disabled:opacity-50"
+                        disabled={currentQty === 0}
+                      >
+                        <span className="material-symbols-outlined text-sm">
+                          remove
+                        </span>
+                      </button>
+                      <span className="w-4 text-center text-sm font-bold">
+                        {currentQty}
+                      </span>
+                      <button
+                        onClick={() =>
+                          store.updateDrink(drink.name, drink.price, 1)
+                        }
+                        className="size-7 bg-primary rounded-full flex items-center justify-center text-white shadow-sm"
+                      >
+                        <span className="material-symbols-outlined text-sm">
+                          add
+                        </span>
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 bg-gray-50 dark:bg-white/5 rounded-full p-1">
-                    <button
-                      onClick={() => store.updateDrink(name, price, -1)}
-                      className="size-7 bg-white dark:bg-white/10 rounded-full flex items-center justify-center text-primary shadow-sm disabled:opacity-50"
-                      disabled={currentQty === 0}
-                    >
-                      <span className="material-symbols-outlined text-sm">
-                        remove
-                      </span>
-                    </button>
-                    <span className="w-4 text-center text-sm font-bold">
-                      {currentQty}
-                    </span>
-                    <button
-                      onClick={() => store.updateDrink(name, price, 1)}
-                      className="size-7 bg-primary rounded-full flex items-center justify-center text-white shadow-sm"
-                    >
-                      <span className="material-symbols-outlined text-sm">
-                        add
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Payment Method */}
@@ -437,7 +500,9 @@ export default function CheckoutPage() {
                   name="payment"
                   className="hidden"
                   checked={store.paymentMethod === method}
-                  onChange={() => store.setPaymentMethod(method as any)}
+                  onChange={() =>
+                    store.setPaymentMethod(method as "Cash" | "Transfer")
+                  }
                 />
                 <div className="flex-1 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary">
@@ -457,9 +522,9 @@ export default function CheckoutPage() {
             <div className="p-4 bg-primary/5 border border-dashed border-primary/40 rounded-xl flex flex-col items-center text-center">
               <span className="text-primary font-bold mb-1">DANA Transfer</span>
               <p className="text-xl font-mono font-bold text-[#181411] dark:text-white mb-1">
-                0812-3456-7890
+                {danaNumber}
               </p>
-              <p className="text-xs text-[#8a7260]">A/N TEH IMAS</p>
+              <p className="text-xs text-[#8a7260]">A/N {danaAccountName}</p>
               <p className="text-xs italic text-gray-500 mt-2">
                 *Jgn lupa upload bukti transfer via WhatsApp
               </p>
@@ -479,6 +544,62 @@ export default function CheckoutPage() {
             onChange={(e) => store.setSpecialRequest(e.target.value)}
           ></textarea>
         </div>
+
+        {/* Verification Warning */}
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 p-4 rounded-2xl space-y-3">
+          <div className="flex gap-3">
+            <span className="material-symbols-outlined text-yellow-600 dark:text-yellow-500 shrink-0">
+              warning
+            </span>
+            <div>
+              <h3 className="font-bold text-yellow-800 dark:text-yellow-200 text-sm">
+                Penting!
+              </h3>
+              <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1 leading-relaxed">
+                {store.paymentMethod === "Cash" ? (
+                  <>
+                    Untuk pembayaran <strong>Tunai</strong>, pesanan{" "}
+                    <strong>TIDAK AKAN DIBUAT</strong> sebelum Anda mengirimkan
+                    konfirmasi ke WhatsApp kami. Pastikan nomor WhatsApp Anda
+                    aktif.
+                  </>
+                ) : (
+                  <>
+                    Pesanan hanya akan diproses jika Anda mengirimkan{" "}
+                    <strong>bukti transfer</strong> dan{" "}
+                    <strong>ringkasan pesanan</strong> ke WhatsApp kami.
+                  </>
+                )}
+              </p>
+            </div>
+          </div>
+
+          <label className="flex items-start gap-3 p-3 bg-white dark:bg-white/5 rounded-xl border border-yellow-100 dark:border-white/10 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10 transition-colors">
+            <div
+              className={clsx(
+                "size-5 rounded border flex items-center justify-center shrink-0 mt-0.5 transition-colors",
+                isAgreed
+                  ? "bg-primary border-primary text-white"
+                  : "border-gray-300 bg-white",
+              )}
+            >
+              {isAgreed && (
+                <span className="material-symbols-outlined text-sm">check</span>
+              )}
+            </div>
+            <input
+              type="checkbox"
+              checked={isAgreed}
+              onChange={(e) => setIsAgreed(e.target.checked)}
+              className="hidden"
+            />
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-300 select-none">
+              Saya mengerti bahwa pesanan{" "}
+              {store.paymentMethod === "Cash" ? "Tunai" : "Transfer"} wajib
+              dikonfirmasi via WhatsApp agar diproses.
+            </span>
+          </label>
+        </div>
       </main>
 
       {/* Sticky Action */}
@@ -493,7 +614,7 @@ export default function CheckoutPage() {
         <Button
           onClick={handleSubmitOrder}
           fullWidth
-          disabled={isSubmitting}
+          disabled={isSubmitting || !isAgreed}
           className="bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-[#25d366]/20"
         >
           <span className="material-symbols-outlined mr-2">

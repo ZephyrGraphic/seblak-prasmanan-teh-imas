@@ -1,22 +1,46 @@
 {
-  "name": "Seblak Teh Imas",
-  "short_name": "Seblak Imas",
-  "description": "Aplikasi Pesanan Seblak Prasmanan Teh Imas",
+  "name": "Seblak Prasmanan Teh Imas",
+  "short_name": "SP Teh Imas",
+  "description": "Aplikasi Pesanan Seblak Prasmanan Teh Imas - Cibolang Kaler, Kec. Cisaat",
+  "id": "/",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#fdfaf8",
   "theme_color": "#f47b25",
   "orientation": "portrait",
+  "categories": ["food", "shopping", "business"],
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Pesan Seblak",
+      "short_name": "Pesan",
+      "description": "Buat pesanan seblak baru",
+      "url": "/order",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Admin Dashboard",
+      "short_name": "Admin",
+      "description": "Buka dashboard admin",
+      "url": "/admin/dashboard",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }

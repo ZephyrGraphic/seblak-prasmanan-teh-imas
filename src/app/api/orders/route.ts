@@ -45,14 +45,27 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status") as OrderStatus | null;
     const today = searchParams.get("today") === "true";
+    const date = searchParams.get("date"); // Format: YYYY-MM-DD
 
-    const where: { status?: OrderStatus; createdAt?: { gte: Date } } = {};
+    const where: {
+      status?: OrderStatus;
+      createdAt?: { gte: Date; lte?: Date };
+    } = {};
 
     if (status) {
       where.status = status;
     }
 
-    if (today) {
+    // Date filtering: specific date takes priority over 'today'
+    if (date) {
+      // Filter by specific date
+      const targetDate = new Date(date);
+      const startOfDay = new Date(targetDate);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(targetDate);
+      endOfDay.setHours(23, 59, 59, 999);
+      where.createdAt = { gte: startOfDay, lte: endOfDay };
+    } else if (today) {
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);
       where.createdAt = { gte: startOfDay };

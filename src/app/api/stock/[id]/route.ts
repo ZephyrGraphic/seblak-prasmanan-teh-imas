@@ -1,31 +1,36 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { StockStatus } from '@prisma/client';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { StockStatus } from "@prisma/client";
 
 // ==================== PATCH - Update Stock Item ====================
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, unit, stock, status, isAvailable, emoji } = body;
-    
+    const { name, unit, stock, status, isAvailable, emoji, price, category } =
+      body;
+
     // Build update data
-    const updateData: { 
-      name?: string; 
-      unit?: string; 
-      stock?: number; 
+    const updateData: {
+      name?: string;
+      unit?: string;
+      stock?: number;
       status?: StockStatus;
       isAvailable?: boolean;
       emoji?: string;
+      price?: number;
+      category?: string;
     } = {};
-    
+
     if (name !== undefined) updateData.name = name;
     if (unit !== undefined) updateData.unit = unit;
     if (isAvailable !== undefined) updateData.isAvailable = isAvailable;
     if (emoji !== undefined) updateData.emoji = emoji;
+    if (price !== undefined) updateData.price = price;
+    if (category !== undefined) updateData.category = category;
     if (stock !== undefined) {
       updateData.stock = stock;
       // Auto-update status based on stock if not explicitly provided
@@ -40,23 +45,22 @@ export async function PATCH(
       }
     }
     if (status !== undefined) updateData.status = status;
-    
+
     const item = await prisma.stockItem.update({
       where: { id },
-      data: updateData
+      data: updateData,
     });
-    
-    return NextResponse.json({ 
-      success: true, 
+
+    return NextResponse.json({
+      success: true,
       data: item,
-      message: `Stock item "${item.name}" updated`
+      message: `Stock item "${item.name}" updated`,
     });
-    
   } catch (error) {
-    console.error('Error updating stock item:', error);
+    console.error("Error updating stock item:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to update stock item' },
-      { status: 500 }
+      { success: false, error: "Failed to update stock item" },
+      { status: 500 },
     );
   }
 }
@@ -64,25 +68,24 @@ export async function PATCH(
 // ==================== DELETE - Remove Stock Item ====================
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
-    
+
     const item = await prisma.stockItem.delete({
-      where: { id }
+      where: { id },
     });
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: `Stock item "${item.name}" deleted`
+
+    return NextResponse.json({
+      success: true,
+      message: `Stock item "${item.name}" deleted`,
     });
-    
   } catch (error) {
-    console.error('Error deleting stock item:', error);
+    console.error("Error deleting stock item:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to delete stock item' },
-      { status: 500 }
+      { success: false, error: "Failed to delete stock item" },
+      { status: 500 },
     );
   }
 }

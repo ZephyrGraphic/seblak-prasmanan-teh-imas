@@ -106,6 +106,8 @@ model StockItem {
   id          String      @id @default(cuid())
   name        String      @unique
   unit        String      // "kg", "pcs", "pack"
+  price       Int         @default(1000)  // Price in Rupiah
+  category    String      @default("topping")  // "topping", "drink", "other"
   stock       Int         @default(0)
   status      StockStatus @default(OK)
   isAvailable Boolean     @default(true)  // Toggle for availability
@@ -114,6 +116,7 @@ model StockItem {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
+
 
 model Admin {
   id           String   @id @default(cuid())

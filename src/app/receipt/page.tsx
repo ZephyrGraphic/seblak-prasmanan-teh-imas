@@ -457,6 +457,23 @@ function ReceiptContent() {
             <p style={{ color: "#8a7260" }} className="text-[10px] font-medium">
               Selamat menikmati seblak Teh Imas!
             </p>
+            <div
+              style={{ borderColor: "#e5e7eb" }}
+              className="border-t border-dashed mt-4 pt-3"
+            >
+              <p
+                style={{ color: "#6b7280" }}
+                className="text-[9px] leading-relaxed"
+              >
+                📍 Cibolang Kaler, Kec. Cisaat, Sukabumi
+              </p>
+              <p style={{ color: "#6b7280" }} className="text-[9px]">
+                📞 WA: 083813731449
+              </p>
+              <p style={{ color: "#9ca3af" }} className="text-[8px] mt-1">
+                sp-teh-imas.vercel.app
+              </p>
+            </div>
           </div>
         </div>
 

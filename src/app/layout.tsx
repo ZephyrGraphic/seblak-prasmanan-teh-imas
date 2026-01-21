@@ -10,19 +10,21 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://seblak-prasmanan-teh-imas.vercel.app/"),
-  title: "Seblak Teh Imas",
-  description: "Seblak Prasmanan Autentik Bandung - Pesan Online Sekarang!",
+  metadataBase: new URL("https://sp-teh-imas.vercel.app/"),
+  title: "Seblak Prasmanan Teh Imas",
+  description:
+    "Seblak Prasmanan Autentik - Cibolang Kaler, Kec. Cisaat. Pesan Online Sekarang!",
   manifest: "/manifest.json",
   icons: {
     icon: "/icons/icon-192x192.png",
     apple: "/icons/icon-192x192.png",
   },
   openGraph: {
-    title: "Seblak Teh Imas",
-    description: "Nikmati Seblak Prasmanan Autentik dengan berbagai pilihan topping dan level pedas.",
-    url: "https://seblak-prasmanan-teh-imas.vercel.app/",
-    siteName: "Seblak Teh Imas",
+    title: "Seblak Prasmanan Teh Imas",
+    description:
+      "Nikmati Seblak Prasmanan Autentik dengan berbagai pilihan topping dan level pedas.",
+    url: "https://sp-teh-imas.vercel.app/",
+    siteName: "Seblak Prasmanan Teh Imas",
     images: [
       {
         url: "/icons/icon-512x512.png",
@@ -36,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Seblak Teh Imas",
-    description: "Seblak Prasmanan Autentik Bandung - Pesan Online Sekarang!",
+    title: "Seblak Prasmanan Teh Imas",
+    description: "Seblak Prasmanan Autentik - Pesan Online Sekarang!",
     images: ["/icons/icon-512x512.png"],
   },
 };
@@ -57,9 +59,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className="light" suppressHydrationWarning>
-      <head>
-
-      </head>
+      <head></head>
       <body
         className={`${plusJakartaSans.variable} font-sans antialiased bg-[#f2f2f2] dark:bg-[#1a1a1a] text-[#181411] dark:text-white min-h-screen flex justify-center`}
         suppressHydrationWarning

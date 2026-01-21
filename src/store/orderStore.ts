@@ -1,30 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type SpiceLevel = 0 | 1 | 2 | 3 | 4 | 5;
+export type SpiceLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
-export const TOPPINGS_PRICE: Record<string, number> = {
-  "Scrambled Egg": 4000,
-  "Boiled Egg": 3000,
-  "Sawi Hijau": 2000,
-  Kubis: 2000,
-  "Jamur Kuping": 2000,
-  "Kerupuk Orange": 3000,
-  Makaroni: 3000,
-  Batagor: 3000,
-  Siomay: 3000,
-  Ceker: 4000,
-  Tulang: 5000,
-  Bakso: 4000,
-  Sosis: 4000,
-  // Add defaults from form if needed, price is estimation based on standard
-};
-
-export const DRINKS_PRICE: Record<string, number> = {
-  "Es Teh Manis": 5000,
-  "Jeruk Hangat": 7000,
-  "Air Mineral": 4000,
-};
+// Note: Menu data (toppings & drinks) now comes from database via /api/stock
+// These constants are kept for backward compatibility but should be removed eventually
 
 export interface SeblakItem {
   id: string;
