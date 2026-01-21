@@ -1,0 +1,26 @@
+{
+  "name": "SP Teh Imas Admin",
+  "short_name": "Admin SP",
+  "description": "Admin Application for Seblak Prasmanan Teh Imas",
+  "id": "/admin",
+  "start_url": "/admin/dashboard",
+  "scope": "/admin",
+  "display": "standalone",
+  "background_color": "#fdfaf8",
+  "theme_color": "#f47b25",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

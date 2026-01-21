@@ -1,31 +1,16 @@
-"use client";
+import type { Metadata } from "next";
+import AdminPWAWrapper from "./AdminPWAWrapper";
 
-import { useEffect } from "react";
+export const metadata: Metadata = {
+  manifest: "/admin-manifest.json",
+  title: "Admin - Seblak Teh Imas",
+  description: "Dashboard Admin Seblak Prasmanan Teh Imas",
+};
 
 export default function AdminLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
-  useEffect(() => {
-    // Register service worker for PWA
-    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((registration) => {
-          console.log(
-            "[Admin PWA] Service Worker registered:",
-            registration.scope,
-          );
-        })
-        .catch((error) => {
-          console.error(
-            "[Admin PWA] Service Worker registration failed:",
-            error,
-          );
-        });
-    }
-  }, []);
-
-  return <>{children}</>;
+}>) {
+  return <AdminPWAWrapper>{children}</AdminPWAWrapper>;
 }

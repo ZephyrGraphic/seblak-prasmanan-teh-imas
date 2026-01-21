@@ -32,13 +32,6 @@
       "description": "Buat pesanan seblak baru",
       "url": "/order",
       "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Admin Dashboard",
-      "short_name": "Admin",
-      "description": "Buka dashboard admin",
-      "url": "/admin/dashboard",
-      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     }
   ],
   "related_applications": [],
