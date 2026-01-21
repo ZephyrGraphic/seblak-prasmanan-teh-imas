@@ -37,6 +37,12 @@ enum StockStatus {
   OUT
 }
 
+enum MembershipLevel {
+  BRONZE
+  SILVER
+  GOLD
+}
+
 // ============ MODELS ============
 
 model Order {
@@ -48,6 +54,10 @@ model Order {
   status        OrderStatus   @default(PENDING)
   specialRequest String?
   totalPrice    Int
+  
+  // CRM: Link to registered customer (optional)
+  customerId    String?
+  customer      Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
   
   // Void order fields
   voidedAt      DateTime?
@@ -61,6 +71,7 @@ model Order {
   
   @@index([status])
   @@index([createdAt])
+  @@index([customerId])
 }
 
 model OrderItem {
@@ -133,4 +144,48 @@ model QueueCounter {
   takeaway  Int      @default(0)
   
   updatedAt DateTime @updatedAt
+}
+
+// ============ CRM MODELS ============
+
+// Customer (Pelanggan)
+model Customer {
+  id            String          @id @default(cuid())
+  name          String
+  phone         String          @unique
+  email         String?
+  membership    MembershipLevel @default(BRONZE)
+  totalSpent    Int             @default(0)
+  orderCount    Int             @default(0)
+  
+  notes         CustomerNote[]
+  orders        Order[]
+  feedbacks     CustomerFeedback[]
+  
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  
+  @@index([phone])
+  @@index([membership])
+}
+
+// Catatan Pelanggan
+model CustomerNote {
+  id          String   @id @default(cuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  content     String
+  createdBy   String   @default("Admin")
+  createdAt   DateTime @default(now())
+}
+
+// Feedback dari Member
+model CustomerFeedback {
+  id          String   @id @default(cuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  orderId     String?  // Optional link to specific order
+  rating      Int      // 1-5 stars
+  comment     String?
+  createdAt   DateTime @default(now())
 }
