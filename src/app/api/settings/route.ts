@@ -1,34 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 // ==================== GET - Get Store Settings ====================
 export async function GET() {
   try {
     let settings = await prisma.storeSettings.findUnique({
-      where: { id: 'default' }
+      where: { id: "default" },
     });
-    
+
     // Create default settings if not exist
     if (!settings) {
       settings = await prisma.storeSettings.create({
         data: {
-          id: 'default',
+          id: "default",
           isOpen: true,
           soundNotification: true,
           ttsNotification: false,
-          whatsappNumber: '6281234567890',
-          danaNumber: '081234567890',
-          danaAccountName: 'TEH IMAS'
-        }
+          whatsappNumber: "6283813731449",
+          danaNumber: "083813731449",
+          danaAccountName: "TEH IMAS",
+        },
       });
     }
-    
+
     return NextResponse.json({ success: true, data: settings });
   } catch (error) {
-    console.error('Error fetching settings:', error);
+    console.error("Error fetching settings:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch settings' },
-      { status: 500 }
+      { success: false, error: "Failed to fetch settings" },
+      { status: 500 },
     );
   }
 }
@@ -37,15 +37,15 @@ export async function GET() {
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { 
-      isOpen, 
-      soundNotification, 
+    const {
+      isOpen,
+      soundNotification,
       ttsNotification,
       whatsappNumber,
       danaNumber,
-      danaAccountName
+      danaAccountName,
     } = body;
-    
+
     // Build update data
     const updateData: {
       isOpen?: boolean;
@@ -55,39 +55,42 @@ export async function PATCH(request: NextRequest) {
       danaNumber?: string;
       danaAccountName?: string;
     } = {};
-    
+
     if (isOpen !== undefined) updateData.isOpen = isOpen;
-    if (soundNotification !== undefined) updateData.soundNotification = soundNotification;
-    if (ttsNotification !== undefined) updateData.ttsNotification = ttsNotification;
-    if (whatsappNumber !== undefined) updateData.whatsappNumber = whatsappNumber;
+    if (soundNotification !== undefined)
+      updateData.soundNotification = soundNotification;
+    if (ttsNotification !== undefined)
+      updateData.ttsNotification = ttsNotification;
+    if (whatsappNumber !== undefined)
+      updateData.whatsappNumber = whatsappNumber;
     if (danaNumber !== undefined) updateData.danaNumber = danaNumber;
-    if (danaAccountName !== undefined) updateData.danaAccountName = danaAccountName;
-    
+    if (danaAccountName !== undefined)
+      updateData.danaAccountName = danaAccountName;
+
     const settings = await prisma.storeSettings.upsert({
-      where: { id: 'default' },
+      where: { id: "default" },
       update: updateData,
       create: {
-        id: 'default',
+        id: "default",
         isOpen: isOpen ?? true,
         soundNotification: soundNotification ?? true,
         ttsNotification: ttsNotification ?? false,
-        whatsappNumber: whatsappNumber ?? '6281234567890',
-        danaNumber: danaNumber ?? '081234567890',
-        danaAccountName: danaAccountName ?? 'TEH IMAS'
-      }
+        whatsappNumber: whatsappNumber ?? "6283813731449",
+        danaNumber: danaNumber ?? "083813731449",
+        danaAccountName: danaAccountName ?? "TEH IMAS",
+      },
     });
-    
-    return NextResponse.json({ 
-      success: true, 
+
+    return NextResponse.json({
+      success: true,
       data: settings,
-      message: 'Settings updated successfully'
+      message: "Settings updated successfully",
     });
-    
   } catch (error) {
-    console.error('Error updating settings:', error);
+    console.error("Error updating settings:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to update settings' },
-      { status: 500 }
+      { success: false, error: "Failed to update settings" },
+      { status: 500 },
     );
   }
 }
